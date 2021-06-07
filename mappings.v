@@ -10,7 +10,6 @@ struct SourcePosition {
 	source_column u32
 }
 
-
 type IndexNumber = u32
 type SourcePositionType = Empty | SourcePosition
 type NameIndexType = Empty | IndexNumber
@@ -100,7 +99,7 @@ fn (mut m Mappings) export_mappings(mut output io.Writer) ? {
 		}
 		if cloned_generated_line != previous_generated_line {
 			previous_generated_column = 0
-			previous_generated_line=cloned_generated_line
+			previous_generated_line = cloned_generated_line
 		} else {
 			if i > 0 {
 				if !compare_by_generated_positions_inflated(mapping, line_mappings[i - 1]) {
@@ -173,7 +172,7 @@ fn compare_by_generated_positions_inflated(mapping_a Mapping, mapping_b Mapping)
 	)
 }
 */
-/* 
+/*
 fn compare_by_generated_positions_inflated(mapping_a Mapping, mapping_b Mapping) bool {
 	ident_1 := mapping_a.gen_line != mapping_b.gen_line
 		|| mapping_a.gen_column != mapping_b.gen_column
@@ -199,17 +198,17 @@ fn compare_by_generated_positions_inflated(mapping_a Mapping, mapping_b Mapping)
 		return mapping_a.names_ind.type_name()==mapping_b.names_ind.type_name()
 	}
 
-} */
+}*/
 
 fn compare_by_generated_positions_inflated(mapping_a Mapping, mapping_b Mapping) bool {
-	if mapping_a.gen_line != mapping_b.gen_line{
+	if mapping_a.gen_line != mapping_b.gen_line {
 		return true
 	}
-	if mapping_a.gen_column != mapping_b.gen_column{
+	if mapping_a.gen_column != mapping_b.gen_column {
 		return true
 	}
-	
-	if mapping_a.sources_ind != mapping_b.sources_ind{
+
+	if mapping_a.sources_ind != mapping_b.sources_ind {
 		return true
 	}
 
@@ -225,10 +224,10 @@ fn compare_by_generated_positions_inflated(mapping_a Mapping, mapping_b Mapping)
 		}
 	}
 
-	if mapping_a.names_ind.type_name()==mapping_b.names_ind.type_name() && mapping_a.names_ind is IndexNumber {
+	if mapping_a.names_ind.type_name() == mapping_b.names_ind.type_name()
+		&& mapping_a.names_ind is IndexNumber {
 		return (mapping_a.names_ind as IndexNumber) != (mapping_b.names_ind as IndexNumber)
 	} else {
-		return mapping_a.names_ind.type_name()!=mapping_b.names_ind.type_name()
+		return mapping_a.names_ind.type_name() != mapping_b.names_ind.type_name()
 	}
-
 }

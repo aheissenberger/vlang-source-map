@@ -1,11 +1,13 @@
 module sourcemap
+
 import io
 import x.json2
+
 const (
 	source_map_version = 3
 )
-type SourceMapJson = map[string]json2.Any
 
+type SourceMapJson = map[string]json2.Any
 
 struct SourceMap {
 pub mut:
@@ -23,7 +25,7 @@ pub mut:
 	bytes []byte
 }
 
-pub fn new_sourcemap(file string ,source_root string) SourceMap {
+pub fn new_sourcemap(file string, source_root string) SourceMap {
 	return SourceMap{
 		version: sourcemap.source_map_version
 		file: file
@@ -68,44 +70,44 @@ pub fn (mut sm SourceMap) set_source_content(source_name string, source_content 
 	sm.sources_content[source_name] = source_content
 }
 
-fn (mut sm SourceMap) export_mappings(mut writer io.Writer){
-
-	sm.mappings.export_mappings(mut writer) or {panic('export failed')}
+fn (mut sm SourceMap) export_mappings(mut writer io.Writer) {
+	sm.mappings.export_mappings(mut writer) or { panic('export failed') }
 }
 
-fn (mut sm SourceMap) export_mappings_string()string{
+fn (mut sm SourceMap) export_mappings_string() string {
 	mut output := StringWriter{}
 
-	sm.mappings.export_mappings(mut output) or {panic('export failed')}
+	sm.mappings.export_mappings(mut output) or { panic('export failed') }
 	return output.bytes.bytestr()
 }
 
-
+// create a JSON representing the sourcemap
+// Sourcemap Specs http://sourcemaps.info/spec.html
 pub fn (mut sm SourceMap) to_json() SourceMapJson {
 	mut source_map_json := map[string]json2.Any{}
-	source_map_json['version']=sm.version
-	source_map_json['file']=sm.file
-	source_map_json['sourceRoot']=sm.source_root
+	source_map_json['version'] = sm.version
+	source_map_json['file'] = sm.file
+	source_map_json['sourceRoot'] = sm.source_root
 
-	mut sources_json:=[]json2.Any{}
-	mut sources_content_json:=[]json2.Any{}
+	mut sources_json := []json2.Any{}
+	mut sources_content_json := []json2.Any{}
 	for source_file, _ in sm.sources.value {
 		sources_json << source_file
 		if source_file in sm.sources_content {
-			sources_content_json << sm.sources_content[source_file]} else {
-				sources_content_json << json2.null
-				}
+			sources_content_json << sm.sources_content[source_file]
+		} else {
+			sources_content_json << json2.null
+		}
 	}
-	source_map_json['sources']=sources_json
-	source_map_json['sourcesContent']=sources_content_json
+	source_map_json['sources'] = sources_json
+	source_map_json['sourcesContent'] = sources_content_json
 
-	
-	mut names_json:=[]json2.Any{}
-	for name,_ in sm.names.value {
-	names_json<<name
+	mut names_json := []json2.Any{}
+	for name, _ in sm.names.value {
+		names_json << name
 	}
-	source_map_json['names']=names_json
-	source_map_json['mappings']=sm.export_mappings_string()
+	source_map_json['names'] = names_json
+	source_map_json['mappings'] = sm.export_mappings_string()
 	return source_map_json
 }
 
