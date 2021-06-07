@@ -5,7 +5,7 @@ import io
 
 struct Empty {}
 
-struct SourcePosition {
+pub struct SourcePosition {
 	source_line   u32
 	source_column u32
 }

@@ -1,7 +1,5 @@
 module sourcemap
 
-import x.json2
-
 struct V3 {
 	SourceMap
 pub:
@@ -27,7 +25,7 @@ mut:
 	sections []Section
 }
 
-pub fn generate_empty_map() ?&Generator {
+pub fn generate_empty_map() &Generator {
 	return &Generator{}
 }
 
