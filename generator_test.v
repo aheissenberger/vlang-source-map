@@ -6,7 +6,7 @@ pub mut:
 }
 
 fn test_dev() {
-	mut sg := generate_empty_map() or { panic('broken') }
+	mut sg := generate_empty_map()
 	mut sm := sg.add_map('hello.js', '', 0, 0)
 	sm.set_source_content('hello.v', "fn main(){nprintln('Hello World! Helo \$a')\n}")
 
