@@ -39,7 +39,7 @@ not implemented
 
 ## API Documentation
 
-[auto generated documentation](https://github.com/aheissenberger/vlang-source-map-module/blob/master/_docs/sourcemap.md#contents)
+[auto generated documentation](https://github.com/aheissenberger/vlang-source-map/blob/master/_docs/sourcemap.md#contents)
 (created `v doc -f md -m . -o .`)
 
 ### Roadmap

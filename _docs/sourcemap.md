@@ -41,7 +41,7 @@ not implemented
 
 ## API Documentation
 
-[auto generated documentation](https://github.com/aheissenberger/vlang-sourcemap/blob/main/_docs/sourcemap.md#contents)
+[auto generated documentation](https://github.com/aheissenberger/vlang-source-map/blob/master/_docs/sourcemap.md#contents)
 (created `v doc -f md -m . -o .`)
 
 ### Roadmap
@@ -75,10 +75,11 @@ Distributed under the "bsd-2-clause" License. See [LICENSE.txt](LICENSE.txt) for
   - [add_mapping_list](#add_mapping_list)
   - [set_source_content](#set_source_content)
   - [to_json](#to_json)
+- [SourcePosition](#SourcePosition)
 
 ## generate_empty_map
 ```v
-fn generate_empty_map() ?&Generator
+fn generate_empty_map() &Generator
 ```
 
 
@@ -134,4 +135,15 @@ fn (mut sm SourceMap) to_json() SourceMapJson
 
 [[Return to contents]](#Contents)
 
-#### Powered by vdoc. Generated on: 7 Jun 2021 13:46:40
+## SourcePosition
+```v
+struct SourcePosition {
+	source_line   u32
+	source_column u32
+}
+```
+
+
+[[Return to contents]](#Contents)
+
+#### Powered by vdoc. Generated on: 7 Jun 2021 23:45:00
