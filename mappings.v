@@ -1,6 +1,6 @@
 module sourcemap
 
-import aheissenberger.vlq
+import v.gen.js.sourcemap.vlq
 import io
 
 struct Empty {}
@@ -109,25 +109,25 @@ fn (mut m Mappings) export_mappings(mut output io.Writer) ? {
 			}
 		}
 
-		vlq.encode(i64(mapping.gen_column - previous_generated_column), mut &output)
+		vlq.encode(i64(mapping.gen_column - previous_generated_column), mut &output) ?
 		previous_generated_column = mapping.gen_column
 		match mapping.source_position {
 			Empty {}
 			SourcePosition {
-				vlq.encode(i64(mapping.sources_ind - previous_source_index), mut &output)
+				vlq.encode(i64(mapping.sources_ind - previous_source_index), mut &output) ?
 				previous_source_index = mapping.sources_ind
 				// lines are stored 0-based in SourceMap spec version 3
 				vlq.encode(i64(mapping.source_position.source_line - 1 - previous_source_line), mut
-					output)
+					output) ?
 				previous_source_line = mapping.source_position.source_line - 1
 				vlq.encode(i64(mapping.source_position.source_column - previous_source_column), mut
-					output)
+					output) ?
 				previous_source_column = mapping.source_position.source_column
 
 				match mapping.names_ind {
 					Empty {}
 					IndexNumber {
-						vlq.encode(i64(mapping.names_ind - previous_name_index), mut &output)
+						vlq.encode(i64(mapping.names_ind - previous_name_index), mut &output) ?
 						previous_name_index = mapping.names_ind
 					}
 				}
@@ -135,70 +135,6 @@ fn (mut m Mappings) export_mappings(mut output io.Writer) ? {
 		}
 	}
 }
-
-/*
-fn compare_by_generated_positions_inflated(mapping_a Mapping, mapping_b Mapping) bool {
-	return  !(mapping_a.gen_line != mapping_b.gen_line || mapping_a.gen_column != mapping_b.gen_column || mapping_a.sources_ind != mapping_b.sources_ind
-	||
-	match mapping_a.source_position {
-		SourcePosition {
-			match mapping_b.source_position {
-				SourcePosition {
-					mapping_a.source_position.source_line != mapping_b.source_position.source_line || mapping_a.source_position.source_column != mapping_b.source_position.source_column
-				}
-				else {
-					true
-				}
-			}
-		}
-		else {
-			true
-		}
-	} || match mapping_a.names_ind {
-		u32 {
-			match mapping_b.names_ind {
-				u32 {
-					mapping_a.names_ind != mapping_b.names_ind
-				}
-				else {
-					true
-				}
-			}
-		}
-		else {
-			true
-		}
-	}
-	)
-}
-*/
-/*
-fn compare_by_generated_positions_inflated(mapping_a Mapping, mapping_b Mapping) bool {
-	ident_1 := mapping_a.gen_line != mapping_b.gen_line
-		|| mapping_a.gen_column != mapping_b.gen_column
-		|| mapping_a.sources_ind != mapping_b.sources_ind
-	if ident_1 {
-		return false
-	}
-	if mapping_a.source_position.type_name() == mapping_b.source_position.type_name()
-		&& mapping_b.source_position is SourcePosition {
-		if
-			(mapping_a.source_position as SourcePosition).source_line != (mapping_b.source_position as SourcePosition).source_line || (mapping_a.source_position as SourcePosition).source_column != (mapping_b.source_position as SourcePosition).source_column {
-			return false
-		}
-	} else {
-		if mapping_a.source_position.type_name() != mapping_b.source_position.type_name() {
-			return false
-		}
-	}
-
-	if mapping_a.names_ind.type_name()==mapping_b.names_ind.type_name() && mapping_a.names_ind is IndexNumber {
-		return (mapping_a.names_ind as IndexNumber) == (mapping_b.names_ind as IndexNumber)
-	} else {
-		return mapping_a.names_ind.type_name()==mapping_b.names_ind.type_name()
-	}
-
-}*/
 
 fn compare_by_generated_positions_inflated(mapping_a Mapping, mapping_b Mapping) bool {
 	if mapping_a.gen_line != mapping_b.gen_line {

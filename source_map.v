@@ -1,6 +1,7 @@
 module sourcemap
 
 import io
+import os
 import x.json2
 
 const (
@@ -11,13 +12,14 @@ type SourceMapJson = map[string]json2.Any
 
 struct SourceMap {
 pub mut:
-	version         int               [json: version]
-	file            string            [json: file]
-	source_root     string            [json: source_root]
-	sources         Sets              [json: sources]
-	sources_content map[string]string
-	names           Sets
-	mappings        Mappings
+	version                int               [json: version]
+	file                   string            [json: file]
+	source_root            string            [json: source_root]
+	sources                Sets              [json: sources]
+	sources_content        map[string]string
+	names                  Sets
+	mappings               Mappings
+	sources_content_inline bool
 }
 
 struct StringWriter {
@@ -25,12 +27,13 @@ pub mut:
 	bytes []byte
 }
 
-pub fn new_sourcemap(file string, source_root string) SourceMap {
+pub fn new_sourcemap(file string, source_root string, sources_content_inline bool) SourceMap {
 	return SourceMap{
 		version: sourcemap.source_map_version
 		file: file
 		source_root: source_root
 		mappings: new_mappings()
+		sources_content_inline: sources_content_inline
 	}
 }
 
@@ -87,10 +90,10 @@ pub fn (mut sm SourceMap) to_json() SourceMapJson {
 	mut source_map_json := map[string]json2.Any{}
 	source_map_json['version'] = sm.version
 	if sm.file != '' {
-		source_map_json['file'] = sm.file
+		source_map_json['file'] = json2.Any(sm.file)
 	}
 	if sm.source_root != '' {
-		source_map_json['sourceRoot'] = sm.source_root
+		source_map_json['sourceRoot'] = json2.Any(sm.source_root)
 	}
 	mut sources_json := []json2.Any{}
 	mut sources_content_json := []json2.Any{}
@@ -99,17 +102,25 @@ pub fn (mut sm SourceMap) to_json() SourceMapJson {
 		if source_file in sm.sources_content {
 			sources_content_json << sm.sources_content[source_file]
 		} else {
-			sources_content_json << json2.null
+			if sm.sources_content_inline {
+				if source_file_content := os.read_file(source_file) {
+					sources_content_json << source_file_content
+				} else {
+					sources_content_json << json2.null
+				}
+			} else {
+				sources_content_json << json2.null
+			}
 		}
 	}
-	source_map_json['sources'] = sources_json
-	source_map_json['sourcesContent'] = sources_content_json
+	source_map_json['sources'] = json2.Any(sources_json)
+	source_map_json['sourcesContent'] = json2.Any(sources_content_json)
 
 	mut names_json := []json2.Any{}
 	for name, _ in sm.names.value {
 		names_json << name
 	}
-	source_map_json['names'] = names_json
+	source_map_json['names'] = json2.Any(names_json)
 	source_map_json['mappings'] = sm.export_mappings_string()
 	return source_map_json
 }
