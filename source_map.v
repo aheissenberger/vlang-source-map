@@ -86,9 +86,12 @@ fn (mut sm SourceMap) export_mappings_string() string {
 pub fn (mut sm SourceMap) to_json() SourceMapJson {
 	mut source_map_json := map[string]json2.Any{}
 	source_map_json['version'] = sm.version
-	source_map_json['file'] = sm.file
-	source_map_json['sourceRoot'] = sm.source_root
-
+	if sm.file != '' {
+		source_map_json['file'] = sm.file
+	}
+	if sm.source_root != '' {
+		source_map_json['sourceRoot'] = sm.source_root
+	}
 	mut sources_json := []json2.Any{}
 	mut sources_content_json := []json2.Any{}
 	for source_file, _ in sm.sources.value {
