@@ -1,6 +1,6 @@
 module sourcemap
 
-import v.gen.js.sourcemap.vlq
+import aheissenberger.vlq
 import io
 
 struct Empty {}
